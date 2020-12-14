@@ -16,7 +16,7 @@ namespace AzureFunctionTest
     {
         [FunctionName("LeaderBoard")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{target}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "LeaderBoard/List/{target}")] HttpRequest req,
             string target,
             ILogger log)
         {
