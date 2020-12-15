@@ -1,3 +1,3 @@
-# Azure Function Test
+# ALL IN Skate Challenge Functions
 
-Just a test repo for trying out Azure Functions.
+A supporting set of Azure Functions to augment the ALL IN Skate Challenge site.
