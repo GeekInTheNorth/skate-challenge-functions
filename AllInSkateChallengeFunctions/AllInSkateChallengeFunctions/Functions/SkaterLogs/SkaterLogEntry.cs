@@ -1,4 +1,4 @@
-﻿namespace AzureFunctionTest.Functions.SkaterLogs
+﻿namespace AllInSkateChallengeFunctions.Functions.SkaterLogs
 {
     using System;
 

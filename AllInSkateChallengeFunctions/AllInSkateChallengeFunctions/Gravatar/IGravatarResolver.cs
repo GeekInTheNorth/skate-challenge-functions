@@ -1,4 +1,4 @@
-namespace AzureFunctionTest.Gravatar
+namespace AllInSkateChallengeFunctions.Gravatar
 {
     public interface IGravatarResolver
     {

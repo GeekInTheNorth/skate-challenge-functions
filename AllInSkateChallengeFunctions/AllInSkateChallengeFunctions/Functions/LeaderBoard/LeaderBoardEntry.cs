@@ -1,4 +1,4 @@
-namespace AzureFunctionTest.Functions.LeaderBoard
+namespace AllInSkateChallengeFunctions.Functions.LeaderBoard
 {
     public class LeaderBoardEntry
     {

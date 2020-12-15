@@ -1,10 +1,10 @@
-namespace AzureFunctionTest.Functions.LeaderBoard
+namespace AllInSkateChallengeFunctions.Functions.LeaderBoard
 {
     using System.Collections.Generic;
     using System.Data.SqlClient;
     using System.Threading.Tasks;
 
-    using AzureFunctionTest.Gravatar;
+    using AllInSkateChallengeFunctions.Gravatar;
 
     using Microsoft.Extensions.Configuration;
 

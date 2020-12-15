@@ -1,13 +1,17 @@
-﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
+﻿using AllInSkateChallengeFunctions;
 
-[assembly: FunctionsStartup(typeof(AzureFunctionTest.StartUp))]
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 
-namespace AzureFunctionTest
+[assembly: FunctionsStartup(typeof(StartUp))]
+
+namespace AllInSkateChallengeFunctions
 {
-    using AzureFunctionTest.Functions.LeaderBoard;
-    using AzureFunctionTest.Functions.SkaterLogs;
-    using AzureFunctionTest.Gravatar;
+    using AllInSkateChallengeFunctions.Functions.LeaderBoard;
+    using AllInSkateChallengeFunctions.Functions.SkaterLogs;
+    using AllInSkateChallengeFunctions.Gravatar;
+
+    using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+    using Microsoft.Extensions.DependencyInjection;
 
     public class StartUp : FunctionsStartup
     {

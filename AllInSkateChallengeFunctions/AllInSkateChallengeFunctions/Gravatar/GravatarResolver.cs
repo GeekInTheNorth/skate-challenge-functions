@@ -1,4 +1,4 @@
-namespace AzureFunctionTest.Gravatar
+namespace AllInSkateChallengeFunctions.Gravatar
 {
     using System.Linq;
     using System.Security.Cryptography;

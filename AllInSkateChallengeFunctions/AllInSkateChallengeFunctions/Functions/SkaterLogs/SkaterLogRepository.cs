@@ -1,11 +1,11 @@
-﻿namespace AzureFunctionTest.Functions.SkaterLogs
+﻿namespace AllInSkateChallengeFunctions.Functions.SkaterLogs
 {
     using System;
     using System.Collections.Generic;
     using System.Data.SqlClient;
     using System.Threading.Tasks;
 
-    using AzureFunctionTest.Gravatar;
+    using AllInSkateChallengeFunctions.Gravatar;
 
     using Microsoft.Extensions.Configuration;
 
