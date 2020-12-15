@@ -5,13 +5,17 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AzureFunctionTest
 {
-    using Microsoft.Extensions.Configuration;
+    using AzureFunctionTest.Functions.LeaderBoard;
+    using AzureFunctionTest.Functions.SkaterLogs;
+    using AzureFunctionTest.Gravatar;
 
     public class StartUp : FunctionsStartup
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
             builder.Services.AddSingleton<IGravatarResolver, GravatarResolver>();
+            builder.Services.AddSingleton<ILeaderBoardRepository, LeaderBoardRepository>();
+            builder.Services.AddSingleton<ISkaterLogRepository, SkaterLogRepository>();
         }
     }
 }

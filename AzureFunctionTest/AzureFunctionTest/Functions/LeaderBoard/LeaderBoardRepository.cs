@@ -1,36 +1,27 @@
-namespace AzureFunctionTest
+namespace AzureFunctionTest.Functions.LeaderBoard
 {
-    using System;
     using System.Collections.Generic;
     using System.Data.SqlClient;
     using System.Threading.Tasks;
 
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Azure.WebJobs;
-    using Microsoft.Azure.WebJobs.Extensions.Http;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Logging;
+    using AzureFunctionTest.Gravatar;
 
-    public class LeaderBoard
+    using Microsoft.Extensions.Configuration;
+
+    public class LeaderBoardRepository : ILeaderBoardRepository
     {
         private readonly IGravatarResolver gravatarResolver;
 
         private readonly IConfiguration configuration;
 
-        public LeaderBoard(IGravatarResolver gravatarResolver, IConfiguration configuration)
+        public LeaderBoardRepository(IGravatarResolver gravatarResolver, IConfiguration configuration)
         {
             this.gravatarResolver = gravatarResolver;
             this.configuration = configuration;
         }
 
-        [FunctionName("LeaderBoard")]
-        public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "LeaderBoard/List/{target}")] HttpRequest req,
-            string target,
-            ILogger log)
+        public async Task<IList<LeaderBoardEntry>> Get(SkateTarget target)
         {
-            var skateTarget = GetSkateTarget(target);
             var sql = @"WITH SkateLog_CTE ([ApplicationUserId], [TotalMiles])  
                         AS  
                         (  
@@ -44,19 +35,19 @@ namespace AzureFunctionTest
                         WHERE anu.[HasPaid] = 1 AND anu.[Target] = @target
                         ORDER BY slcte.TotalMiles DESC";
 
-            var leaderBoardEntry = new List<LeaderBoardEntry>();
+            var leaderBoardEntries = new List<LeaderBoardEntry>();
             var connectionString = configuration.GetConnectionString("AllInDbConnection");
             using (var connection = new SqlConnection(connectionString))
             {
                 await connection.OpenAsync();
                 using (var command = new SqlCommand(sql, connection))
                 {
-                    command.Parameters.AddWithValue("target", (int)skateTarget);
+                    command.Parameters.AddWithValue("target", (int)target);
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
                         {
-                            leaderBoardEntry.Add(
+                            leaderBoardEntries.Add(
                                 new LeaderBoardEntry
                                     {
                                         Gravatar = gravatarResolver.GetGravatarUrl(reader.GetString(1)),
@@ -68,26 +59,7 @@ namespace AzureFunctionTest
                 }
             }
 
-            return new OkObjectResult(leaderBoardEntry);
-        }
-
-        private static SkateTarget GetSkateTarget(string target)
-        {
-            if (!Enum.TryParse<SkateTarget>(target, out var skateTarget))
-            {
-                return SkateTarget.LiverpoolCanningDock;
-            }
-
-            return skateTarget;
-        }
-
-        private class LeaderBoardEntry
-        {
-            public string Gravatar { get; set; }
-
-            public string SkaterName { get; set; }
-
-            public decimal TotalMiles { get; set; }
+            return leaderBoardEntries;
         }
     }
 }

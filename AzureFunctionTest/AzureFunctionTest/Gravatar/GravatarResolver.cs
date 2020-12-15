@@ -1,10 +1,4 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright company="twentysix" file="GravatarResolver.cs">
-// Copyright (c) twentysix.  All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace AzureFunctionTest
+namespace AzureFunctionTest.Gravatar
 {
     using System.Linq;
     using System.Security.Cryptography;

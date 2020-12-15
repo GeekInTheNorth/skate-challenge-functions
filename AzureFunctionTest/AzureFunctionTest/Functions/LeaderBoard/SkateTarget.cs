@@ -1,10 +1,4 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright company="twentysix" file="SkateTarget.cs">
-// Copyright (c) twentysix.  All rights reserved.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace AzureFunctionTest
+namespace AzureFunctionTest.Functions.LeaderBoard
 {
     public enum SkateTarget
     {

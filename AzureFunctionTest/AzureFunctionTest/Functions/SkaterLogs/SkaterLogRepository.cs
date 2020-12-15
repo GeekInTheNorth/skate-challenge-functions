@@ -1,37 +1,28 @@
-﻿namespace AzureFunctionTest
+﻿namespace AzureFunctionTest.Functions.SkaterLogs
 {
     using System;
     using System.Collections.Generic;
     using System.Data.SqlClient;
     using System.Threading.Tasks;
 
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Azure.WebJobs;
-    using Microsoft.Azure.WebJobs.Extensions.Http;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Logging;
+    using AzureFunctionTest.Gravatar;
 
-    public class SkaterUpdates
+    using Microsoft.Extensions.Configuration;
+
+    public class SkaterLogRepository : ISkaterLogRepository
     {
         private readonly IGravatarResolver gravatarResolver;
 
         private readonly IConfiguration configuration;
 
-        public SkaterUpdates(IGravatarResolver gravatarResolver, IConfiguration configuration)
+        public SkaterLogRepository(IGravatarResolver gravatarResolver, IConfiguration configuration)
         {
             this.gravatarResolver = gravatarResolver;
             this.configuration = configuration;
         }
 
-        [FunctionName("SkaterUpdates")]
-        public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "SkaterUpdates/List/")]
-            HttpRequest req,
-            ILogger log)
+        public async Task<IList<SkaterLogEntry>> Get(int skip, int take)
         {
-            var take = GetTakeValue(req);
-            var skip = GetSkipValue(req);
             var sql = @"SELECT anu.[Id], anu.[Email], anu.[SkaterName], sle.[Logged], sle.[DistanceInMiles], sle.[Name]
                         FROM [dbo].[AspNetUsers] anu
                         INNER JOIN [SkateLogEntries] sle ON anu.[Id] = sle.[ApplicationUserId]
@@ -41,7 +32,7 @@
                         FETCH NEXT {1} ROWS ONLY;";
             sql = string.Format(sql, skip, take);
 
-            var skateLogEntries = new List<SkateLogEntry>();
+            var skaterLogEntries = new List<SkaterLogEntry>();
             var connectionString = configuration.GetConnectionString("AllInDbConnection");
             using (var connection = new SqlConnection(connectionString))
             {
@@ -52,9 +43,9 @@
                     {
                         while (await reader.ReadAsync())
                         {
-                            skateLogEntries.Add(
-                                new SkateLogEntry
-                                {
+                            skaterLogEntries.Add(
+                                new SkaterLogEntry
+                                    {
                                         Gravatar = gravatarResolver.GetGravatarUrl(reader.GetString(1)),
                                         SkaterName = reader[2] != DBNull.Value ? reader.GetString(2) : "Private Skater",
                                         Logged = reader.GetDateTime(3),
@@ -66,42 +57,7 @@
                 }
             }
 
-            return new OkObjectResult(skateLogEntries);
-        }
-
-        private int GetTakeValue(HttpRequest req)
-        {
-            var takeValue = 15;
-            if (int.TryParse(req.Query["take"], out var parsedValue))
-            {
-                takeValue = parsedValue;
-            }
-
-            return takeValue;
-        }
-
-        private int GetSkipValue(HttpRequest req)
-        {
-            var skipValue = 0;
-            if (int.TryParse(req.Query["skip"], out var parsedValue))
-            {
-                skipValue = parsedValue;
-            }
-
-            return skipValue;
-        }
-
-        private class SkateLogEntry
-        {
-            public string Gravatar { get; set; }
-
-            public string SkaterName { get; set; }
-
-            public DateTime Logged { get; set; }
-
-            public decimal Miles { get; set; }
-
-            public string ActivityName { get; set; }
+            return skaterLogEntries;
         }
     }
 }
