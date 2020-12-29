@@ -21,11 +21,49 @@
             this.configuration = configuration;
         }
 
-        public async Task<IList<SkaterLogEntry>> Get(int skip, int take)
+        public async Task<SkaterLogResult> Get(int skip, int take)
         {
-            var sql = @"SELECT anu.[Id], anu.[Email], anu.[SkaterName], sle.[Logged], sle.[DistanceInMiles], sle.[Name]
+            var total = await GetTotal();
+            var logs = await GetLogs(skip, take);
+            var remaining = total - (skip + take);
+            remaining = remaining < 0 ? 0 : remaining;
+
+            return new SkaterLogResult { Total = total, Log = logs, Remaining = remaining };
+        }
+
+        private string GetProfileImage(string emailAddress, string profileImage)
+        {
+            return string.IsNullOrWhiteSpace(profileImage) ? gravatarResolver.GetGravatarUrl(emailAddress) : profileImage;
+        }
+
+        private async Task<int> GetTotal()
+        {
+            var sql = "SELECT COUNT(*) FROM [dbo].[SkateLogEntries]";
+
+            var connectionString = configuration.GetConnectionString("AllInDbConnection");
+            using (var connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        if (reader.Read())
+                        {
+                            return reader.GetInt32(0);
+                        }
+                    }
+                }
+            }
+
+            return 0;
+        }
+
+        private async Task<List<SkaterLogEntry>> GetLogs(int skip, int take)
+        {
+            var sql = @"SELECT anu.[Id], anu.[Email], anu.[SkaterName], anu.[ExternalProfileImage], sle.[Logged], sle.[DistanceInMiles], sle.[Name]
                         FROM [dbo].[AspNetUsers] anu
-                        INNER JOIN [SkateLogEntries] sle ON anu.[Id] = sle.[ApplicationUserId]
+                        INNER JOIN [dbo].[SkateLogEntries] sle ON anu.[Id] = sle.[ApplicationUserId]
                         WHERE anu.[HasPaid] = 1
                         ORDER BY sle.[Logged] DESC
                         OFFSET {0} ROWS
@@ -43,15 +81,15 @@
                     {
                         while (await reader.ReadAsync())
                         {
-                            skaterLogEntries.Add(
-                                new SkaterLogEntry
-                                    {
-                                        Gravatar = gravatarResolver.GetGravatarUrl(reader.GetString(1)),
-                                        SkaterName = reader[2] != DBNull.Value ? reader.GetString(2) : "Private Skater",
-                                        Logged = reader.GetDateTime(3),
-                                        Miles = reader.GetDecimal(4),
-                                        ActivityName = reader[5] != DBNull.Value ? reader.GetString(5) : null
-                                    });
+                            var email = reader.GetString(1);
+                            var name = reader[2] != DBNull.Value ? reader.GetString(2) : null;
+                            var externalProfileImage = reader[3] != DBNull.Value ? reader.GetString(3) : null;
+                            var dateLogged = reader.GetDateTime(4);
+                            var miles = reader.GetDecimal(5);
+                            var activityName = reader[6] != DBNull.Value ? reader.GetString(6) : null;
+                            var profileImage = GetProfileImage(email, externalProfileImage);
+
+                            skaterLogEntries.Add(new SkaterLogEntry { ProfileImage = profileImage, SkaterName = name, Logged = dateLogged, Miles = miles, ActivityName = activityName });
                         }
                     }
                 }

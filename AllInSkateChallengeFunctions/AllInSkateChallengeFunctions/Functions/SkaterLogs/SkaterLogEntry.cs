@@ -4,7 +4,7 @@
 
     public class SkaterLogEntry
     {
-        public string Gravatar { get; set; }
+        public string ProfileImage { get; set; }
 
         public string SkaterName { get; set; }
 

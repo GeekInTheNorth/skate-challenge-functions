@@ -2,7 +2,9 @@ namespace AllInSkateChallengeFunctions.Functions.LeaderBoard
 {
     public class LeaderBoardEntry
     {
-        public string Gravatar { get; set; }
+        public int Position { get; set; }
+
+        public string ProfileImage { get; set; }
 
         public string SkaterName { get; set; }
 
