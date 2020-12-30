@@ -6,6 +6,7 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 
 namespace AllInSkateChallengeFunctions
 {
+    using AllInSkateChallengeFunctions.Functions.Events;
     using AllInSkateChallengeFunctions.Functions.LeaderBoard;
     using AllInSkateChallengeFunctions.Functions.SkaterLogs;
     using AllInSkateChallengeFunctions.Gravatar;
@@ -20,6 +21,7 @@ namespace AllInSkateChallengeFunctions
             builder.Services.AddSingleton<IGravatarResolver, GravatarResolver>();
             builder.Services.AddSingleton<ILeaderBoardRepository, LeaderBoardRepository>();
             builder.Services.AddSingleton<ISkaterLogRepository, SkaterLogRepository>();
+            builder.Services.AddSingleton<IEventStatisticRepository, EventStatisticRepository>();
         }
     }
 }
