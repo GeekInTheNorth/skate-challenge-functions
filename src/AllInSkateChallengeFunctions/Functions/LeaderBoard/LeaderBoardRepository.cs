@@ -23,6 +23,7 @@ namespace AllInSkateChallengeFunctions.Functions.LeaderBoard
 
         public async Task<IList<LeaderBoardEntry>> Get(SkateTarget target)
         {
+            var targetDistance = GetTargetDistance(target);
             var sql = @"WITH SkateLog_CTE ([ApplicationUserId], [TotalMiles])  
                         AS  
                         (  
@@ -33,7 +34,7 @@ namespace AllInSkateChallengeFunctions.Functions.LeaderBoard
                         SELECT anu.[Id], anu.[Email], anu.[SkaterName], anu.[ExternalProfileImage], slcte.[TotalMiles]
                         FROM [dbo].[AspNetUsers] anu
                         INNER JOIN [SkateLog_CTE] slcte ON anu.[Id] = slcte.[ApplicationUserId]
-                        WHERE anu.[HasPaid] = 1 AND anu.[Target] = @target
+                        WHERE anu.[HasPaid] = 1 AND (anu.[Target] = @target OR slcte.TotalMiles <= @targetDistance)
                         ORDER BY slcte.TotalMiles DESC";
 
             var position = 1;
@@ -45,6 +46,7 @@ namespace AllInSkateChallengeFunctions.Functions.LeaderBoard
                 using (var command = new SqlCommand(sql, connection))
                 {
                     command.Parameters.AddWithValue("target", (int)target);
+                    command.Parameters.AddWithValue("targetDistance", targetDistance);
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -67,6 +69,39 @@ namespace AllInSkateChallengeFunctions.Functions.LeaderBoard
         private string GetProfileImage(string emailAddress, string profileImage)
         {
             return string.IsNullOrWhiteSpace(profileImage) ? gravatarResolver.GetGravatarUrl(emailAddress) : profileImage;
+        }
+
+        private decimal GetTargetDistance(SkateTarget skateTarget)
+        {
+            switch (skateTarget)
+            {
+                case SkateTarget.AireValleyMarina:
+                    return 2.1M;
+                case SkateTarget.Saltaire:
+                    return 13M;
+                case SkateTarget.BingleyFiveRiseLocks:
+                    return 16M;
+                case SkateTarget.SkiptonCastle:
+                    return 30M;
+                case SkateTarget.EastMartonDoubleArchedBridge:
+                    return 38M;
+                case SkateTarget.FoulridgeSummit:
+                    return 47M;
+                case SkateTarget.Burnley:
+                    return 57M;
+                case SkateTarget.HalfwayThere:
+                    return 63M;
+                case SkateTarget.BlackburnFlight:
+                    return 72M;
+                case SkateTarget.WiganPier:
+                    return 93M;
+                case SkateTarget.TheScotchPiperInn:
+                    return 113M;
+                case SkateTarget.ThereAndBackAgain:
+                    return 255M;
+                default:
+                    return 127.5M;
+            }
         }
     }
 }
