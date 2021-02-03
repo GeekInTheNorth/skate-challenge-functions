@@ -32,7 +32,7 @@ namespace AllInSkateChallengeFunctions.Functions.LeaderBoard
 
         private static SkateTarget GetSkateTarget(string target)
         {
-            if (!Enum.TryParse<SkateTarget>(target, out var skateTarget))
+            if (!Enum.TryParse<SkateTarget>(target, true, out var skateTarget))
             {
                 return SkateTarget.LiverpoolCanningDock;
             }
