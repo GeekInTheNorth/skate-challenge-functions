@@ -1,6 +1,7 @@
 namespace AllInSkateChallengeFunctions.Functions.LeaderBoard
 {
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
 
     using Microsoft.AspNetCore.Http;
@@ -26,6 +27,13 @@ namespace AllInSkateChallengeFunctions.Functions.LeaderBoard
         {
             var skateTarget = GetSkateTarget(target);
             var data = await repository.Get(skateTarget);
+
+            if (req.Query.ContainsKey("limit"))
+            {
+                var limit = int.Parse(req.Query["limit"]);
+
+                return new OkObjectResult(data.Take(limit));
+            }
             
             return new OkObjectResult(data);
         }
