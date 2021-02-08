@@ -55,9 +55,16 @@ namespace AllInSkateChallengeFunctions.Functions.LeaderBoard
                             var name = reader[2] != DBNull.Value ? reader.GetString(2) : null;
                             var externalProfileImage = reader[3] != DBNull.Value ? reader.GetString(3) : null;
                             var totalMiles = reader.GetDecimal(4);
-                            var profileImage = GetProfileImage(email, externalProfileImage);
 
-                            leaderBoardEntries.Add(new LeaderBoardEntry { Position = position++, ProfileImage = profileImage, SkaterName = name, TotalMiles = totalMiles });
+                            leaderBoardEntries.Add(
+                                new LeaderBoardEntry 
+                                { 
+                                    Position = position++, 
+                                    ProfileImage = GetProfileImage(email, externalProfileImage), 
+                                    SkaterName = GetDisplayName(name), 
+                                    TotalMiles = 
+                                    totalMiles 
+                                });
                         }
                     }
                 }
@@ -69,6 +76,11 @@ namespace AllInSkateChallengeFunctions.Functions.LeaderBoard
         private string GetProfileImage(string emailAddress, string profileImage)
         {
             return string.IsNullOrWhiteSpace(profileImage) ? gravatarResolver.GetGravatarUrl(emailAddress) : profileImage;
+        }
+
+        private string GetDisplayName(string skaterName)
+        {
+            return skaterName?.Replace("_", " ");
         }
 
         private decimal GetTargetDistance(SkateTarget skateTarget)
