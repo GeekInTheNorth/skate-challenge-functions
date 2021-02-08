@@ -36,6 +36,11 @@
             return string.IsNullOrWhiteSpace(profileImage) ? gravatarResolver.GetGravatarUrl(emailAddress) : profileImage;
         }
 
+        private string GetDisplayName(string skaterName)
+        {
+            return skaterName?.Replace("_", " ");
+        }
+
         private async Task<int> GetTotal()
         {
             var sql = "SELECT COUNT(*) FROM [dbo].[SkateLogEntries]";
@@ -87,9 +92,16 @@
                             var dateLogged = reader.GetDateTime(4);
                             var miles = reader.GetDecimal(5);
                             var activityName = reader[6] != DBNull.Value ? reader.GetString(6) : null;
-                            var profileImage = GetProfileImage(email, externalProfileImage);
 
-                            skaterLogEntries.Add(new SkaterLogEntry { ProfileImage = profileImage, SkaterName = name, Logged = dateLogged, Miles = miles, ActivityName = activityName });
+                            skaterLogEntries.Add(
+                                new SkaterLogEntry 
+                                { 
+                                    ProfileImage = GetProfileImage(email, externalProfileImage), 
+                                    SkaterName = GetDisplayName(name), 
+                                    Logged = dateLogged, 
+                                    Miles = miles, 
+                                    ActivityName = activityName 
+                                });
                         }
                     }
                 }
