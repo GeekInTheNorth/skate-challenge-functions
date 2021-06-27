@@ -6,6 +6,7 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 
 namespace AllInSkateChallengeFunctions
 {
+    using AllInSkateChallengeFunctions.Functions.DbCleanUp;
     using AllInSkateChallengeFunctions.Functions.Events;
     using AllInSkateChallengeFunctions.Functions.LeaderBoard;
     using AllInSkateChallengeFunctions.Functions.SkaterLogs;
@@ -22,6 +23,7 @@ namespace AllInSkateChallengeFunctions
             builder.Services.AddSingleton<ILeaderBoardRepository, LeaderBoardRepository>();
             builder.Services.AddSingleton<ISkaterLogRepository, SkaterLogRepository>();
             builder.Services.AddSingleton<IEventStatisticRepository, EventStatisticRepository>();
+            builder.Services.AddSingleton<IDbCleanUpRepository, DbCleanUpRepository>();
         }
     }
 }
