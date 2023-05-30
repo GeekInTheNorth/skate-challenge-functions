@@ -42,7 +42,7 @@ namespace AllInSkateChallengeFunctions.Functions.LeaderBoard
         {
             if (!Enum.TryParse<SkateTarget>(target, true, out var skateTarget))
             {
-                return SkateTarget.LiverpoolCanningDock;
+                return SkateTarget.LeedsBradfordAirport;
             }
 
             return skateTarget;

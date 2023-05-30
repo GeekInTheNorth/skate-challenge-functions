@@ -1,3 +1,5 @@
+using AllInSkateChallenge.Features.Common;
+
 namespace AllInSkateChallengeFunctions.Functions.LeaderBoard
 {
     public class LeaderBoardEntry
@@ -9,5 +11,7 @@ namespace AllInSkateChallengeFunctions.Functions.LeaderBoard
         public string SkaterName { get; set; }
 
         public decimal TotalMiles { get; set; }
+
+        public decimal TotalKilometres => Conversion.MilesToKilometres(TotalMiles);
     }
 }
