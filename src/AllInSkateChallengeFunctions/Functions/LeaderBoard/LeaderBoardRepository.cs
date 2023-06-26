@@ -147,6 +147,8 @@ namespace AllInSkateChallengeFunctions.Functions.LeaderBoard
                     return 97.3M;
                 case SkateTarget.LeedsBradfordAirport:
                     return 100;
+                case SkateTarget.ThereAndBackAgain:
+                    return 200;
                 default:
                     return 100;
             }

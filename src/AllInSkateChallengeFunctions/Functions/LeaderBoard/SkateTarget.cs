@@ -30,6 +30,7 @@ namespace AllInSkateChallengeFunctions.Functions.LeaderBoard
         HarewoodHouseTrust = 25,
         OtleyChevinForestPark = 26,
         YeadonTarn = 27,
-        LeedsBradfordAirport = 28
+        LeedsBradfordAirport = 28,
+        ThereAndBackAgain = 29
     }
 }
